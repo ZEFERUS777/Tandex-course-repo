@@ -6,25 +6,16 @@
       <rect>
         <x>0</x>
         <y>0</y>
-        <width>400</width>
-        <height>300</height>
+        <width>800</width>
+        <height>600</height>
       </rect>
     </property>
     <widget class="QWidget" name="centralwidget">
       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-          <widget class="QPushButton" name="drawButton">
-            <property name="text">
-              <string>Добавить окружность</string>
-            </property>
-          </widget>
-        </item>
-        <item>
-          <widget class="QGraphicsView" name="drawArea"/>
+          <widget class="QTableWidget" name="table"/>
         </item>
       </layout>
     </widget>
   </widget>
-  <resources/>
-  <connections/>
 </ui>

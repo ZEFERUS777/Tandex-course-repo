@@ -1,61 +1,41 @@
-from PyQt6.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QGraphicsScene,
-    QGraphicsEllipseItem,
-    QPushButton,
-    QGraphicsView,
-    QVBoxLayout,
-    QWidget
-)
-from PyQt6.QtGui import QColor, QBrush
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem
+from PyQt6 import uic
+import sqlite3
 import sys
-import random
 
 
-class MainWindow(QMainWindow):
+class CoffeeApp(QMainWindow):
     def __init__(self):
         super().__init__()
+        uic.loadUi('main.ui', self)
+        self.load_data()
 
-        self.setWindowTitle("Random Circles")
-        self.setGeometry(100, 100, 600, 400)
+    def load_data(self):
+        try:
+            conn = sqlite3.connect('coffee.sqlite')
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM coffee")
+            rows = cursor.fetchall()
 
-        self.central_widget = QWidget()
-        self.layout = QVBoxLayout(self.central_widget)
+            self.table.setRowCount(len(rows))
+            self.table.setColumnCount(7)
+            self.table.setHorizontalHeaderLabels([
+                "ID", "Название", "Обжарка", "Тип",
+                "Описание", "Цена", "Объем"
+            ])
 
-        self.drawButton = QPushButton("Добавить окружность")
-        self.drawArea = QGraphicsView()
+            for row_idx, row in enumerate(rows):
+                for col_idx, value in enumerate(row):
+                    self.table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
 
-        self.scene = QGraphicsScene()
-        self.drawArea.setScene(self.scene)
+            conn.close()
 
-        self.layout.addWidget(self.drawButton)
-        self.layout.addWidget(self.drawArea)
-
-        self.setCentralWidget(self.central_widget)
-        self.drawButton.clicked.connect(self.add_circle)
-
-    def add_circle(self):
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
-
-        diameter = random.randint(10, 100)
-        view_width = self.drawArea.viewport().width()
-        view_height = self.drawArea.viewport().height()
-        max_x = max(view_width - diameter, 0)
-        max_y = max(view_height - diameter, 0)
-
-        x = random.randint(0, max_x) if max_x > 0 else 0
-        y = random.randint(0, max_y) if max_y > 0 else 0
-
-        ellipse = QGraphicsEllipseItem(x, y, diameter, diameter)
-        ellipse.setBrush(QBrush(QColor(r, g, b)))
-        self.scene.addItem(ellipse)
+        except sqlite3.Error as e:
+            print("Database error:", e)
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = CoffeeApp()
     window.show()
     sys.exit(app.exec())
