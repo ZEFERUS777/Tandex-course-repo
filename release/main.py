@@ -1,20 +1,22 @@
 import sqlite3
 import sys
 
-from PyQt6 import uic
 from PyQt6.QtWidgets import QMainWindow, QApplication, QTableWidgetItem, QTableWidget, QWidget
 
+from foem import Ui_Form
+from main_inter import Ui_MainWindow
 
-class Add_Coffee(QWidget):
+
+class Add_Coffee(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
-        uic.loadUi('foem.ui', self)
+        self.setupUi(self)
 
 
-class Window(QMainWindow):
+class Window(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
         self.table: QTableWidget = self.table
         self.table.setColumnCount(7)
         self.table.setHorizontalHeaderLabels(
